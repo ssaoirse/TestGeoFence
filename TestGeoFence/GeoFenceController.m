@@ -33,6 +33,8 @@ typedef enum
 @property (assign, nonatomic) GeoFenceControllerState state;
 /// Holds the current User location.
 @property (strong, nonatomic) CLLocation* userLocation;
+/// Array to hold all geo fences.
+@property (strong, nonatomic) NSMutableArray* allFences;
 
 @end
 
@@ -61,6 +63,9 @@ typedef enum
         
         // Initialize the user location.
         self.userLocation = [[CLLocation alloc] init];
+        
+        // Initialize array to hold fences.(CLLocation)
+        self.allFences = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -93,7 +98,8 @@ typedef enum
         default:
         {
             self.state = ERequestingSettingsUpdate;
-            [self notifyError:kAuthorizationNotAvailable];
+            [self notifyError:kAuthorizationNotAvailable
+              withDescription:@"Authorization not available."];
             break;
         }
             
@@ -145,7 +151,8 @@ typedef enum
             // App is requesting for authorization.
             if(self.state == ERequestingAuthorization){
                 self.state = EIdle;
-                [self notifyError:kAuthorizationDenied];
+                [self notifyError:kAuthorizationDenied
+                  withDescription:@"Authorization Denied."];
             }
             // Stop the location manager if it is active and notify error to user.
             else if(self.state == ERequestingLocationUpdate){
@@ -210,7 +217,8 @@ typedef enum
 -(void) locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-
+    [self notifyError:kErrorReadingLocation
+      withDescription:[error localizedDescription]];
 }
 
 
@@ -222,7 +230,7 @@ typedef enum
 
 
 // Monitoring failed for region.
--(void) locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(nullable CLRegion *)region
+-(void) locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region
               withError:(NSError *)error
 {
 
@@ -252,6 +260,8 @@ typedef enum
     [self.locationManager requestAlwaysAuthorization];
 }
 
+
+// Initiate request to get current device location.
 -(void) getCurrentLocation
 {
     // Alternatively can use requestLocation on v9 and above.
@@ -272,13 +282,13 @@ typedef enum
 
 // Notify error to listener.
 -(void) notifyError:(GeoFenceControllerError)error
+    withDescription:(NSString*)description
 {
-    if([self.geoFenceDelegate respondsToSelector:@selector(didFailWithError:)]){
-        [self.geoFenceDelegate didFailWithError:error];
+    if([self.geoFenceDelegate respondsToSelector:@selector(didFailWithError:description:)]){
+        [self.geoFenceDelegate didFailWithError:error description:description];
     }
 }
 
 
 @end
-
 

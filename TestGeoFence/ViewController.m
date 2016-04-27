@@ -75,6 +75,7 @@
 
 // Handle errors.
 -(void) didFailWithError:(GeoFenceControllerError)error
+             description:(NSString*)description
 {
     switch(error)
     {
@@ -92,6 +93,18 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self showAlertForAuthorizationDenied];
             });
+            break;
+        }
+        // Error reading location.
+        case kErrorReadingLocation:
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self showGeneralErrorAlertWithMessage:description];
+            });
+            break;
+        }
+        default:
+        {
             break;
         }
     }
@@ -134,6 +147,24 @@
     NSString* message = @"Unable to perform geo fence monitoring without proper authorization.";
     UIAlertController * alert=   [UIAlertController alertControllerWithTitle:@"TestGeoFence"
                                                                      message:message
+                                                              preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* actionOk = [UIAlertAction actionWithTitle:@"Ok"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction * action) {
+                                                         [alert dismissViewControllerAnimated:YES completion:nil];
+                                                     }];
+    [alert addAction:actionOk];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+
+// Display general error alert.
+-(void) showGeneralErrorAlertWithMessage:(NSString*)message
+{
+    NSString* errorMsg = [NSString stringWithFormat:@"Error: %@",message];
+    UIAlertController * alert=   [UIAlertController alertControllerWithTitle:@"TestGeoFence - Error"
+                                                                     message:errorMsg
                                                               preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction* actionOk = [UIAlertAction actionWithTitle:@"Ok"

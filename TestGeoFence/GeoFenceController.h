@@ -11,8 +11,10 @@
 // Constants to notify probable errors.
 typedef enum
 {
+    kErrorGeneral,
     kAuthorizationNotAvailable,                 // Required authorization not available.
-    kAuthorizationDenied                        // Required authorization was modified.
+    kAuthorizationDenied,                       // Required authorization was modified.
+    kErrorReadingLocation
     
 } GeoFenceControllerError;
 
@@ -27,7 +29,8 @@ typedef enum
 -(void) didUpdateLocationWithLatitude:(double)latitude longitude:(double)longitude;
 -(void) didEnterGeoFence;
 -(void) didExitGeoFence;
--(void) didFailWithError:(GeoFenceControllerError)error;
+-(void) didFailWithError:(GeoFenceControllerError)error
+             description:(NSString*)description;
 
 @end
 
