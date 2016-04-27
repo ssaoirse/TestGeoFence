@@ -16,6 +16,7 @@
 @property (strong, nonatomic) UILabel* userPosition;
 @property (strong, nonatomic) UIButton* startMonitorButton;
 @property (strong, nonatomic) UIButton* stopMonitorButton;
+@property (strong, nonatomic) UILabel* controllerStatus;
 
 @end
 
@@ -53,6 +54,14 @@
 }
 
 #pragma mark - GeoFence Delegate.
+
+// Used to update the current status of the geo fence controller.
+-(void) didUpdateStatus:(NSString*)status
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateControllerStatus:status];
+    });
+}
 
 -(void) didUpdateLocationWithLatitude:(double)latitude longitude:(double)longitude
 {
@@ -133,6 +142,10 @@
                                                            style:UIAlertActionStyleDefault
         handler:^(UIAlertAction * action) {
             [alert dismissViewControllerAnimated:YES completion:nil];
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self stopMonitoring];
+            });
         }];
     
     [alert addAction:actionOk];
@@ -195,11 +208,22 @@
 
 -(void) initializeView
 {
-    // Set the User Position label.
+    // Controller status.
     CGRect frame = CGRectMake(20.0,
-                              self.view.frame.size.height/2.0,
+                              0.15 * self.view.frame.size.height,
                               self.view.frame.size.width - 20.0,
                               40.0);
+    self.controllerStatus = [[UILabel alloc] initWithFrame:frame];
+    self.controllerStatus.text = @"Status:";
+    self.controllerStatus.textColor = [UIColor blackColor];
+    [self.view addSubview:self.controllerStatus];
+    
+    
+    // Set the User Position label.
+    frame = CGRectMake(20.0,
+                       self.view.frame.size.height/2.0,
+                       self.view.frame.size.width - 20.0,
+                       40.0);
     self.userPosition = [[UILabel alloc] initWithFrame:frame];
     self.userPosition.text = @"Position";
     self.userPosition.textColor = [UIColor blackColor];
@@ -244,6 +268,14 @@
 {
     self.userPosition.text = [NSString stringWithFormat:@"Lat:%f Long:%f",
                               latitude,longitude];
+}
+
+
+// Updates the controller status text.
+-(void) updateControllerStatus:(NSString*)status
+{
+    self.controllerStatus.text = [NSString stringWithFormat:@"Status: %@...",
+                                  status];
 }
 
 @end

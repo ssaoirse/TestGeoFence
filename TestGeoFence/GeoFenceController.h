@@ -26,6 +26,7 @@ typedef enum
  */
 @protocol GeoFenceControllerDelegate<NSObject>
 
+-(void) didUpdateStatus:(NSString*)status;
 -(void) didUpdateLocationWithLatitude:(double)latitude longitude:(double)longitude;
 -(void) didEnterGeoFence;
 -(void) didExitGeoFence;

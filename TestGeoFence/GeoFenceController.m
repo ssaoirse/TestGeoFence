@@ -89,6 +89,7 @@ typedef enum
         {
             // Request authorization.
             self.state = ERequestingAuthorization;
+            [self notifyControllerStatus:@"Requesting Authorization"];
             [self requestAuthorization];
             return;
         }
@@ -98,6 +99,7 @@ typedef enum
         default:
         {
             self.state = ERequestingSettingsUpdate;
+            [self notifyControllerStatus:@"Requesting Settings update"];
             [self notifyError:kAuthorizationNotAvailable
               withDescription:@"Authorization not available."];
             break;
@@ -115,13 +117,24 @@ typedef enum
 // Stop the location manager activity.
 -(void) stop
 {
+    // If doing nothing just update the status.
     if(self.state == EIdle){
+        [self notifyControllerStatus:@"Idle"];
         return;
     }
     
+    // if requesting update in settings.
+    if(self.state == ERequestingSettingsUpdate){
+        self.state = EIdle;
+        [self notifyControllerStatus:@"Idle"];
+        return;
+    }
+
+    // Stop location update if active.
     if(self.state == ERequestingLocationUpdate){
         self.state = EIdle;
         [self.locationManager stopUpdatingLocation];
+        [self notifyControllerStatus:@"Idle"];
     }
 }
 
@@ -151,12 +164,14 @@ typedef enum
             // App is requesting for authorization.
             if(self.state == ERequestingAuthorization){
                 self.state = EIdle;
+                [self notifyControllerStatus:@"Idle"];
                 [self notifyError:kAuthorizationDenied
                   withDescription:@"Authorization Denied."];
             }
             // Stop the location manager if it is active and notify error to user.
             else if(self.state == ERequestingLocationUpdate){
                 self.state = EIdle;
+                [self notifyControllerStatus:@"Idle"];
                 [self.locationManager stopUpdatingLocation];
             }
             else if(self.state == EMonitoringRegion){
@@ -203,6 +218,7 @@ typedef enum
     // Notify listener if user location has updated.
     if(self.userLocation != currentLocation){
         self.userLocation =  currentLocation;
+        [self notifyControllerStatus:@"Monitor User location"];
         [self notifyUserLocation];
     }
     
@@ -266,6 +282,7 @@ typedef enum
 {
     // Alternatively can use requestLocation on v9 and above.
     self.state = ERequestingLocationUpdate;
+    [self notifyControllerStatus:@"Requesting current location"];
     [self.locationManager startUpdatingLocation];
 }
 
@@ -287,6 +304,16 @@ typedef enum
     if([self.geoFenceDelegate respondsToSelector:@selector(didFailWithError:description:)]){
         [self.geoFenceDelegate didFailWithError:error description:description];
     }
+}
+
+
+// Notify the current activity of controller.
+-(void) notifyControllerStatus:(NSString*)status
+{
+    if([self.geoFenceDelegate respondsToSelector:@selector(didUpdateStatus:)]){
+        [self.geoFenceDelegate didUpdateStatus:status];
+    }
+
 }
 
 
