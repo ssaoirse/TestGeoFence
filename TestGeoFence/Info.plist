@@ -23,9 +23,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Geofence message</string>
+	<string>We use your location to alert you when you move in/out of your geo fences.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>We will notify when you enter or exit a geofence.</string>
+	<string>Location required for geo fencing.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
