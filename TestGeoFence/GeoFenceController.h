@@ -55,12 +55,18 @@ typedef enum
 /// Stop the controller.
 -(void) stop;
 
-#if 0
--(void) addFenceWithTitle:(NSString*)title
+/*!
+ * @brief Add a fence to monitor.
+ * @param  title                An identifier for the geo fence.
+ * @param  latitude             The latitude value in degrees for the center of the fence.
+ * @param  longitude            The longitude value in degress for the center of the fence.
+ * @param  radius               The radius in meters for the fence.
+ * @return BOOL                 return YES when fence is successfully added for tracking.
+ */
+-(BOOL) addFenceWithTitle:(NSString*)title
                  latitude:(double)latitude
                 longitude:(double)longitude
                    radius:(double)radius;
-#endif
 
 @end
 

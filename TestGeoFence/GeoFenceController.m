@@ -11,6 +11,10 @@
 #import <CoreLocation/CLLocationManagerDelegate.h>
 #import <CoreLocation/CLCircularRegion.h>
 
+// Max number of fences.
+const NSInteger MAXIMUM_FENCE_COUNT = 20;
+
+
 @interface GeoFenceController() <CLLocationManagerDelegate>
 
 typedef enum
@@ -141,6 +145,37 @@ typedef enum
         [self notifyControllerStatus:@"Idle"];
     }
 }
+
+
+// Add fence.
+-(BOOL) addFenceWithTitle:(NSString*)title
+                 latitude:(double)latitude
+                longitude:(double)longitude
+                   radius:(double)radius
+{
+    // Return if max fences are already added.
+    if([self.allFences count] == MAXIMUM_FENCE_COUNT){
+        NSLog(@"Max fence count reached.");
+        return NO;
+    }
+    
+    // Ensure input parameters are valid. (radius cannot be negative).
+    if(!(title && [title length] > 0 && radius < 0.0)){
+        return NO;
+    }
+    
+    // Create a fence instance.
+    // TODO: Ensure same fence doesn't get added again.
+    CLLocationCoordinate2D fenceCenter;
+    fenceCenter.latitude = latitude;
+    fenceCenter.longitude = longitude;
+    CLCircularRegion* newFence = [[CLCircularRegion alloc] initWithCenter:fenceCenter
+                                                                   radius:radius
+                                                               identifier:title];
+    [self.allFences addObject:newFence];
+    return YES;
+}
+
 
 #pragma mark - CLLocationManagerDelegate
 
