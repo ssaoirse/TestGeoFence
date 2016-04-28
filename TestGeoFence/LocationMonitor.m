@@ -30,9 +30,6 @@ typedef enum
 @property (weak, nonatomic) id<LocationMonitorDelegate> monitorDelegate;
 /// Holds the current state of the monitor.
 @property (assign, nonatomic) LocationMonitorState state;
-/// Holds the current Location of the User..
-@property (strong, nonatomic) CLLocation* userLocation;
-
 
 @end
 
@@ -58,9 +55,6 @@ typedef enum
         if([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]){
             [self.locationManager setAllowsBackgroundLocationUpdates:YES];
         }
-        
-        // Initialize user's current location.
-        self.userLocation = [[CLLocation alloc] init];
     }
     return self;
 }
@@ -206,9 +200,6 @@ typedef enum
         return;
     }
     
-    // Update the User location.
-    self.userLocation = currentLocation;
-    
     // Update displayed lat/long.
     [self notifyUserLocation];
 }
@@ -239,10 +230,11 @@ typedef enum
 -(void) notifyUserLocation
 {
     if([self.monitorDelegate respondsToSelector:@selector(locationMonitor:updateLocationWithLatitude:longitude:accuracy:)]){
+        CLLocation* lastLocation = self.locationManager.location;
         [self.monitorDelegate locationMonitor:self
-                   updateLocationWithLatitude:self.userLocation.coordinate.latitude
-                                    longitude:self.userLocation.coordinate.longitude
-                                     accuracy:(double)self.userLocation.horizontalAccuracy];
+                   updateLocationWithLatitude:lastLocation.coordinate.latitude
+                                    longitude:lastLocation.coordinate.longitude
+                                     accuracy:(double)lastLocation.horizontalAccuracy];
     }
 }
 

@@ -539,7 +539,7 @@ updateLocationWithLatitude:(double)latitude
                                       latitude];
     self.currentLongitudeLabel.text = [NSString stringWithFormat:@"Long: %3.8f",
                                        longitude];
-    self.accuracyLabel.text = [NSString stringWithFormat:@"Accuracy: +/-%.2fm",
+    self.accuracyLabel.text = [NSString stringWithFormat:@"Accuracy: +/- %.2fm",
                                accuracy];
 }
 
