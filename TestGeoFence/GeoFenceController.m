@@ -69,10 +69,10 @@ typedef enum
         // Initialize array to hold fences.(CLLocation)
         self.allFences = [[NSMutableArray alloc] init];
         
-        // DEBUG ONLY.
+        // DEBUG ONLY. 18.56677862,+73.82974484
         CLLocationCoordinate2D regionCenter;
-        regionCenter.latitude = 18.56674851;
-        regionCenter.longitude = 73.82973671;
+        regionCenter.latitude = 18.56677862;
+        regionCenter.longitude = 73.82974484;
         self.testRegion = [[CLCircularRegion alloc] initWithCenter:regionCenter
                                                             radius:25.0
                                                         identifier:@"Silicus-B"];

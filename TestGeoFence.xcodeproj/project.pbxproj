@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D59A1181CD22B5C0082FCCA /* LocationMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D59A1161CD22B5C0082FCCA /* LocationMapViewController.m */; };
+		2D59A1191CD22B5C0082FCCA /* LocationMapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D59A1171CD22B5C0082FCCA /* LocationMapViewController.xib */; };
+		2D59A11B1CD22D610082FCCA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D59A11A1CD22D610082FCCA /* MapKit.framework */; };
 		2D64ADC11CD0B5D400BCF1F7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D64ADC01CD0B5D400BCF1F7 /* CoreLocation.framework */; };
 		2D64ADC41CD1DE4100BCF1F7 /* LocationMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D64ADC31CD1DE4100BCF1F7 /* LocationMonitor.m */; };
 		2DEE001F1CCF2FB900B988AC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE001E1CCF2FB900B988AC /* main.m */; };
@@ -19,6 +22,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2D59A1151CD22B5C0082FCCA /* LocationMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationMapViewController.h; sourceTree = "<group>"; };
+		2D59A1161CD22B5C0082FCCA /* LocationMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationMapViewController.m; sourceTree = "<group>"; };
+		2D59A1171CD22B5C0082FCCA /* LocationMapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LocationMapViewController.xib; sourceTree = "<group>"; };
+		2D59A11A1CD22D610082FCCA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		2D64ADC01CD0B5D400BCF1F7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		2D64ADC21CD1DE4100BCF1F7 /* LocationMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationMonitor.h; sourceTree = "<group>"; };
 		2D64ADC31CD1DE4100BCF1F7 /* LocationMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationMonitor.m; sourceTree = "<group>"; };
@@ -41,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D59A11B1CD22D610082FCCA /* MapKit.framework in Frameworks */,
 				2D64ADC11CD0B5D400BCF1F7 /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,6 +59,7 @@
 		2DEE00111CCF2FB900B988AC = {
 			isa = PBXGroup;
 			children = (
+				2D59A11A1CD22D610082FCCA /* MapKit.framework */,
 				2D64ADC01CD0B5D400BCF1F7 /* CoreLocation.framework */,
 				2DEE001C1CCF2FB900B988AC /* TestGeoFence */,
 				2DEE001B1CCF2FB900B988AC /* Products */,
@@ -81,6 +90,9 @@
 				2DEE00351CCF306200B988AC /* GeoFenceController.m */,
 				2D64ADC21CD1DE4100BCF1F7 /* LocationMonitor.h */,
 				2D64ADC31CD1DE4100BCF1F7 /* LocationMonitor.m */,
+				2D59A1151CD22B5C0082FCCA /* LocationMapViewController.h */,
+				2D59A1161CD22B5C0082FCCA /* LocationMapViewController.m */,
+				2D59A1171CD22B5C0082FCCA /* LocationMapViewController.xib */,
 			);
 			path = TestGeoFence;
 			sourceTree = "<group>";
@@ -156,6 +168,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D59A1191CD22B5C0082FCCA /* LocationMapViewController.xib in Resources */,
 				2DEE002D1CCF2FB900B988AC /* LaunchScreen.storyboard in Resources */,
 				2DEE002A1CCF2FB900B988AC /* Assets.xcassets in Resources */,
 				2DEE00281CCF2FB900B988AC /* Main.storyboard in Resources */,
@@ -171,6 +184,7 @@
 			files = (
 				2DEE00251CCF2FB900B988AC /* ViewController.m in Sources */,
 				2D64ADC41CD1DE4100BCF1F7 /* LocationMonitor.m in Sources */,
+				2D59A1181CD22B5C0082FCCA /* LocationMapViewController.m in Sources */,
 				2DEE00221CCF2FB900B988AC /* AppDelegate.m in Sources */,
 				2DEE001F1CCF2FB900B988AC /* main.m in Sources */,
 				2DEE00361CCF306200B988AC /* GeoFenceController.m in Sources */,

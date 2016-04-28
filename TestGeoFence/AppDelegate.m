@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "LocationMapViewController.h"
 
 @interface AppDelegate ()
 
@@ -15,8 +16,16 @@
 @implementation AppDelegate
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    
+#if 1
     // Override point for customization after application launch.
+    LocationMapViewController* rootController = [[LocationMapViewController alloc] initWithNibName:@"LocationMapViewController"
+                                                                                            bundle:nil];
+    self.window.rootViewController = rootController;
+    [self.window makeKeyAndVisible];
+#endif
     return YES;
 }
 
