@@ -238,10 +238,11 @@ typedef enum
 // Update current location to listener.
 -(void) notifyUserLocation
 {
-    if([self.monitorDelegate respondsToSelector:@selector(locationMonitor:updateLocationWithLatitude:longitude:)]){
+    if([self.monitorDelegate respondsToSelector:@selector(locationMonitor:updateLocationWithLatitude:longitude:accuracy:)]){
         [self.monitorDelegate locationMonitor:self
                    updateLocationWithLatitude:self.userLocation.coordinate.latitude
-                                    longitude:self.userLocation.coordinate.longitude];
+                                    longitude:self.userLocation.coordinate.longitude
+                                     accuracy:(double)self.userLocation.horizontalAccuracy];
     }
 }
 

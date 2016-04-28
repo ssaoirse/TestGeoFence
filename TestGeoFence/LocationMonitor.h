@@ -38,8 +38,10 @@ typedef enum
  * @param  latitude                 The current latitude value.
  * @param  longitude                The current longitude value.
  */
--(void) locationMonitor:(LocationMonitor*)monitor updateLocationWithLatitude:(double)latitude
-              longitude:(double)longitude;
+-(void) locationMonitor:(LocationMonitor*)monitor
+updateLocationWithLatitude:(double)latitude
+              longitude:(double)longitude
+               accuracy:(double)accuracy;
 
 /*!
  * @brief Notifies about the error

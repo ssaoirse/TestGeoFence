@@ -16,6 +16,7 @@
 @property (strong, nonatomic) UILabel* monitorTitleLabel;
 @property (strong, nonatomic) UILabel* currentLatitudeLabel;
 @property (strong, nonatomic) UILabel* currentLongitudeLabel;
+@property (strong, nonatomic) UILabel* accuracyLabel;
 @property (strong, nonatomic) UILabel* monitorStatusLabel;
 @property (strong, nonatomic) UIButton* startMonitorButton;
 @property (strong, nonatomic) UIButton* stopMonitorButton;
@@ -101,12 +102,15 @@
 
 
 // Notifies current location.
--(void) locationMonitor:(LocationMonitor*)monitor updateLocationWithLatitude:(double)latitude
+-(void) locationMonitor:(LocationMonitor*)monitor
+updateLocationWithLatitude:(double)latitude
               longitude:(double)longitude
+               accuracy:(double)accuracy
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateMonitorLatitude:latitude
-                          longitude:longitude];
+                          longitude:longitude
+                           accuracy:accuracy];
     });
 }
 
@@ -389,10 +393,20 @@
     self.currentLongitudeLabel.textColor = [UIColor blackColor];
     [self.view addSubview:self.currentLongitudeLabel];
     
+    // Accuracy label.
+    frame = CGRectMake(10.0,
+                       self.currentLongitudeLabel.frame.origin.y + self.currentLongitudeLabel.frame.size.height + 1.0,
+                       self.view.frame.size.width - 10.0,
+                       30.0);
+    self.accuracyLabel = [[UILabel alloc] initWithFrame:frame];
+    self.accuracyLabel.text = @"Accuracy:";
+    self.accuracyLabel.textColor = [UIColor blackColor];
+    [self.view addSubview:self.accuracyLabel];
+    
     // Add the start monitor button.
     self.startMonitorButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.startMonitorButton.frame = CGRectMake(self.view.frame.size.width/2.0 - 80.0,
-                                               self.currentLongitudeLabel.frame.origin.y + self.currentLongitudeLabel.frame.size.height + 5.0,
+                                               self.accuracyLabel.frame.origin.y + self.accuracyLabel.frame.size.height + 5.0,
                                                70.0,
                                                30.0);
     [self.startMonitorButton setBackgroundColor:[UIColor grayColor]];
@@ -408,7 +422,7 @@
     // Stop monitor button.
     self.stopMonitorButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.stopMonitorButton.frame = CGRectMake(self.view.frame.size.width/2.0 + 10.0,
-                                              self.currentLongitudeLabel.frame.origin.y + self.currentLongitudeLabel.frame.size.height + 5.0,
+                                              self.accuracyLabel.frame.origin.y + self.accuracyLabel.frame.size.height + 5.0,
                                               70.0,
                                               30.0);
     [self.stopMonitorButton setBackgroundColor:[UIColor grayColor]];
@@ -517,12 +531,16 @@
 
 
 // updates the latitude, longitude position.
--(void) updateMonitorLatitude:(double)latitude longitude:(double)longitude
+-(void) updateMonitorLatitude:(double)latitude
+                    longitude:(double)longitude
+                     accuracy:(double)accuracy
 {
     self.currentLatitudeLabel.text = [NSString stringWithFormat:@"Lat: %2.8f",
                                       latitude];
     self.currentLongitudeLabel.text = [NSString stringWithFormat:@"Long: %3.8f",
                                        longitude];
+    self.accuracyLabel.text = [NSString stringWithFormat:@"Accuracy: +/-%.2fm",
+                               accuracy];
 }
 
 
