@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D64ADC11CD0B5D400BCF1F7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D64ADC01CD0B5D400BCF1F7 /* CoreLocation.framework */; };
+		2D64ADC41CD1DE4100BCF1F7 /* LocationMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D64ADC31CD1DE4100BCF1F7 /* LocationMonitor.m */; };
 		2DEE001F1CCF2FB900B988AC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE001E1CCF2FB900B988AC /* main.m */; };
 		2DEE00221CCF2FB900B988AC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE00211CCF2FB900B988AC /* AppDelegate.m */; };
 		2DEE00251CCF2FB900B988AC /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE00241CCF2FB900B988AC /* ViewController.m */; };
@@ -19,6 +20,8 @@
 
 /* Begin PBXFileReference section */
 		2D64ADC01CD0B5D400BCF1F7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		2D64ADC21CD1DE4100BCF1F7 /* LocationMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationMonitor.h; sourceTree = "<group>"; };
+		2D64ADC31CD1DE4100BCF1F7 /* LocationMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationMonitor.m; sourceTree = "<group>"; };
 		2DEE001A1CCF2FB900B988AC /* TestGeoFence.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestGeoFence.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DEE001E1CCF2FB900B988AC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2DEE00201CCF2FB900B988AC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -76,6 +79,8 @@
 				2DEE001D1CCF2FB900B988AC /* Supporting Files */,
 				2DEE00341CCF306200B988AC /* GeoFenceController.h */,
 				2DEE00351CCF306200B988AC /* GeoFenceController.m */,
+				2D64ADC21CD1DE4100BCF1F7 /* LocationMonitor.h */,
+				2D64ADC31CD1DE4100BCF1F7 /* LocationMonitor.m */,
 			);
 			path = TestGeoFence;
 			sourceTree = "<group>";
@@ -165,6 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DEE00251CCF2FB900B988AC /* ViewController.m in Sources */,
+				2D64ADC41CD1DE4100BCF1F7 /* LocationMonitor.m in Sources */,
 				2DEE00221CCF2FB900B988AC /* AppDelegate.m in Sources */,
 				2DEE001F1CCF2FB900B988AC /* main.m in Sources */,
 				2DEE00361CCF306200B988AC /* GeoFenceController.m in Sources */,

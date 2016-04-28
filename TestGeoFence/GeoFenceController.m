@@ -9,6 +9,7 @@
 #import "GeoFenceController.h"
 #import <CoreLocation/CLLocationManager.h>
 #import <CoreLocation/CLLocationManagerDelegate.h>
+#import <CoreLocation/CLCircularRegion.h>
 
 @interface GeoFenceController() <CLLocationManagerDelegate>
 
@@ -19,8 +20,6 @@ typedef enum
     ERequestingAuthorization,
     // User has once denied authorization, prompt User to change authorization in Settings.
     ERequestingSettingsUpdate,
-    // Request location update to find current user location.
-    ERequestingLocationUpdate,
     // Monitor available geo fences.
     EMonitoringRegion
 }GeoFenceControllerState;
@@ -31,10 +30,12 @@ typedef enum
 @property (weak, nonatomic) id<GeoFenceControllerDelegate> geoFenceDelegate;
 /// Flag to indicate if authorization status was requested by application.
 @property (assign, nonatomic) GeoFenceControllerState state;
-/// Holds the current User location.
-@property (strong, nonatomic) CLLocation* userLocation;
 /// Array to hold all geo fences.
 @property (strong, nonatomic) NSMutableArray* allFences;
+
+// DEBUG ONLY.
+/// Monitored region.
+@property (strong, nonatomic) CLCircularRegion* testRegion;
 
 @end
 
@@ -55,17 +56,22 @@ typedef enum
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
         self.geoFenceDelegate = delegate;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;     //kCLLocationAccuracyBest;
         // Allow updates when app is in background.
         if([self.locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]){
             [self.locationManager setAllowsBackgroundLocationUpdates:YES];
         }
         
-        // Initialize the user location.
-        self.userLocation = [[CLLocation alloc] init];
-        
         // Initialize array to hold fences.(CLLocation)
         self.allFences = [[NSMutableArray alloc] init];
+        
+        // DEBUG ONLY.
+        CLLocationCoordinate2D regionCenter;
+        regionCenter.latitude = 18.56674851;
+        regionCenter.longitude = 73.82973671;
+        self.testRegion = [[CLCircularRegion alloc] initWithCenter:regionCenter
+                                                            radius:25.0
+                                                        identifier:@"Silicus-B"];
     }
     return self;
 }
@@ -108,7 +114,7 @@ typedef enum
         case(kCLAuthorizationStatusAuthorizedAlways):
         {
             // Permission available.
-            [self getCurrentLocation];
+            [self startRegionMonitoring];
             break;
         }
     }
@@ -120,20 +126,18 @@ typedef enum
     // If doing nothing just update the status.
     if(self.state == EIdle){
         [self notifyControllerStatus:@"Idle"];
-        return;
     }
     
     // if requesting update in settings.
-    if(self.state == ERequestingSettingsUpdate){
+    else if(self.state == ERequestingSettingsUpdate){
         self.state = EIdle;
         [self notifyControllerStatus:@"Idle"];
-        return;
     }
 
-    // Stop location update if active.
-    if(self.state == ERequestingLocationUpdate){
+    // Stop region monitoring.
+    else if(self.state == EMonitoringRegion){
         self.state = EIdle;
-        [self.locationManager stopUpdatingLocation];
+        [self.locationManager stopMonitoringForRegion:self.testRegion];
         [self notifyControllerStatus:@"Idle"];
     }
 }
@@ -168,14 +172,10 @@ typedef enum
                 [self notifyError:kAuthorizationDenied
                   withDescription:@"Authorization Denied."];
             }
-            // Stop the location manager if it is active and notify error to user.
-            else if(self.state == ERequestingLocationUpdate){
-                self.state = EIdle;
-                [self notifyControllerStatus:@"Idle"];
-                [self.locationManager stopUpdatingLocation];
-            }
             else if(self.state == EMonitoringRegion){
                 self.state = EIdle;
+                [self.locationManager stopMonitoringForRegion:self.testRegion];
+                [self notifyControllerStatus:@"Idle"];
             }
             return;;
         }
@@ -186,7 +186,7 @@ typedef enum
             if(self.state == ERequestingAuthorization ||
                self.state == ERequestingSettingsUpdate){
                 // Initiate request to get current location..
-                [self getCurrentLocation];
+                [self startRegionMonitoring];
             }
             break;
         }
@@ -194,54 +194,10 @@ typedef enum
 }
 
 
-// Handle the initial location, return after startUpdatingLocation
--(void) locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray<CLLocation *> *)locations
-{
-    NSLog(@"didUpdateLocations: %@",locations);
-    CLLocation* currentLocation = [locations lastObject];
-    // test that the horizontal accuracy does not indicate an invalid measurement
-    if (currentLocation.horizontalAccuracy < 0) {
-        NSLog(@"didUpdateLocations: horizontal accuracy < 0");
-        return;
-    }
-    
-    // test the age of the location measurement to determine if the measurement is cached
-    // in most cases you will not want to rely on cached measurements
-    //
-    NSTimeInterval locationAge = -[currentLocation.timestamp timeIntervalSinceNow];
-    if (locationAge > 5.0) {
-        NSLog(@"didUpdateLocations: age > 5.0");
-        return;
-    }
-    
-    // Notify listener if user location has updated.
-    if(self.userLocation != currentLocation){
-        self.userLocation =  currentLocation;
-        [self notifyControllerStatus:@"Monitor User location"];
-        [self notifyUserLocation];
-    }
-    
-    if (currentLocation.horizontalAccuracy <= self.locationManager.desiredAccuracy) {
-        NSLog(@"Stopping location manager.");
-        [self.locationManager stopUpdatingLocation];
-    }
-    
-}
-
-// Handle error in requesting current location.
--(void) locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error
-{
-    [self notifyError:kErrorReadingLocation
-      withDescription:[error localizedDescription]];
-}
-
-
 // Monitoring for Region started.
 -(void) locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region
 {
-
+    NSLog(@"Monitor entry/exit for %@.",region.identifier);
 }
 
 
@@ -249,7 +205,9 @@ typedef enum
 -(void) locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region
               withError:(NSError *)error
 {
-
+    NSString* message = [NSString stringWithFormat:@"Region Monitoring error: %@.",
+                         [error localizedDescription]];
+    [self notifyControllerStatus:message];
 }
 
 
@@ -257,7 +215,9 @@ typedef enum
 - (void)locationManager:(CLLocationManager *)manager
          didEnterRegion:(CLRegion *)region
 {
-
+    if([self.geoFenceDelegate respondsToSelector:@selector(didEnterGeoFence:)]){
+        [self.geoFenceDelegate didEnterGeoFence:region.identifier];
+    }
 }
 
 
@@ -265,7 +225,10 @@ typedef enum
 - (void)locationManager:(CLLocationManager *)manager
           didExitRegion:(CLRegion *)region
 {
-
+    
+    if([self.geoFenceDelegate respondsToSelector:@selector(didExitGeoFence:)]){
+        [self.geoFenceDelegate didExitGeoFence:region.identifier];
+    }
 }
 
 
@@ -276,24 +239,13 @@ typedef enum
     [self.locationManager requestAlwaysAuthorization];
 }
 
-
-// Initiate request to get current device location.
--(void) getCurrentLocation
+// TEST: Add and monitor region.
+-(void) startRegionMonitoring
 {
-    // Alternatively can use requestLocation on v9 and above.
-    self.state = ERequestingLocationUpdate;
-    [self notifyControllerStatus:@"Requesting current location"];
-    [self.locationManager startUpdatingLocation];
-}
-
-
-// Update current location to listener.
--(void) notifyUserLocation
-{
-    if([self.geoFenceDelegate respondsToSelector:@selector(didUpdateLocationWithLatitude:longitude:)]){
-        [self.geoFenceDelegate didUpdateLocationWithLatitude:self.userLocation.coordinate.latitude
-                                                   longitude:self.userLocation.coordinate.longitude];
-    }
+    self.state = EMonitoringRegion;
+    [self.locationManager startMonitoringForRegion:self.testRegion];
+    [self notifyControllerStatus:@"monitoring region"];
+    [self notifyCurrentFence];
 }
 
 
@@ -313,9 +265,16 @@ typedef enum
     if([self.geoFenceDelegate respondsToSelector:@selector(didUpdateStatus:)]){
         [self.geoFenceDelegate didUpdateStatus:status];
     }
-
 }
 
+// Update the location for current fence.
+-(void) notifyCurrentFence
+{
+    if([self.geoFenceDelegate respondsToSelector:@selector(didUpdateFenceWithLatitude:longitude:)]){
+        [self.geoFenceDelegate didUpdateFenceWithLatitude:self.testRegion.center.latitude
+                                                longitude:self.testRegion.center.longitude];
+    }
+}
 
 @end
 
